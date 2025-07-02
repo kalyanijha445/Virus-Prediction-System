@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Virus Prediction App</title>
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+  <style>
+    body {
+      background-color: #121212;
+      color: white;
+      padding: 50px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .form-control {
+      background-color: #1e1e1e;
+      border: 1px solid red;
+      color: white;
+      transition: border-color 0.3s ease;
+    }
+    .form-control:focus {
+      border-color: #ff4d4d;
+      box-shadow: 0 0 8px #ff4d4d;
+      outline: none;
+    }
+    .container {
+      max-width: 600px;
+    }
+    .result-box {
+      background-color: #1e1e1e;
+      padding: 25px;
+      border-radius: 10px;
+      margin-top: 20px;
+      animation: fadeIn 0.6s ease-in-out;
+    }
+    h1,
+    h2 {
+      color: #ffffff;
+    }
+    button.btn-danger {
+      background-color: #ff4d4d;
+      border-color: #ff4d4d;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      min-width: 120px;
+    }
+    button.btn-danger:hover {
+      background-color: #ff6666;
+      box-shadow: 0 0 12px #ff6666;
+    }
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+    .badge-safe {
+      background-color: #28a745;
+      font-size: 1rem;
+      padding: 0.4em 0.8em;
+    }
+    .badge-virus {
+      background-color: #dc3545;
+      font-size: 1rem;
+      padding: 0.4em 0.8em;
+    }
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .spinner-border {
+      width: 1.2rem;
+      height: 1.2rem;
+      vertical-align: text-bottom;
+      margin-left: 8px;
+    }
+    .btn-clear {
+      margin-left: 10px;
+      background-color: #6c757d;
+      border: none;
+    }
+    .btn-clear:hover {
+      background-color: #5a6268;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 class="text-center mb-4">Virus Prediction App Using Machine Learning</h1>
+    <form method="POST" id="virusForm">
+      <div class="mb-3">
+        <label for="virus_name" class="form-label"
+          >Enter the name of the virus/malware:</label
+        >
+        <input
+          list="virusNames"
+          type="text"
+          name="virus_name"
+          id="virus_name"
+          class="form-control"
+          autocomplete="off"
+          required
+        />
+        <!-- Autocomplete options -->
+        <datalist id="virusNames">
+          <option value="TrojanHorse" />
+          <option value="SpywareAgent" />
+          <option value="AdwareX" />
+          <option value="KeyLoggerPro" />
+          <option value="WormWin32" />
+          <option value="MalwareBytes" />
+          <option value="RansomWareLock" />
+          <option value="RootkitDetector" />
+          <option value="VirusCleaner" />
+          <option value="SafeApp" />
+          <option value="WindowsUpdater" />
+          <option value="CleanManager" />
+          <option value="NormalApp" />
+          <!-- Add more known virus/app names here -->
+        </datalist>
+      </div>
+      <button type="submit" class="btn btn-danger" id="submitBtn">
+        Predict
+        <span
+          class="spinner-border spinner-border-sm d-none"
+          role="status"
+          aria-hidden="true"
+          id="loadingSpinner"
+        ></span>
+      </button>
+      <button type="button" class="btn btn-clear" id="clearBtn">Clear</button>
+    </form>
+
+    {% if virus_name %}
+    <div class="result-box" id="resultBox">
+      <h2>
+        Input:
+        <span style="color: #ff4d4d; font-weight: 600">{{ virus_name }}</span>
+      </h2>
+      <p>
+        <strong>Using Logistic Regression:</strong><br />
+        Virus present?
+        {% if lr_result == 'Yes' %}
+        <span class="badge badge-virus">Yes</span>
+        {% else %}
+        <span class="badge badge-safe">No</span>
+        {% endif %}
+      </p>
+      <p>
+        <strong>Using Random Forest Classifier:</strong><br />
+        Virus present?
+        {% if rf_result == 'Yes' %}
+        <span class="badge badge-virus">Yes</span>
+        {% else %}
+        <span class="badge badge-safe">No</span>
+        {% endif %}
+      </p>
+    </div>
+    {% endif %}
+  </div>
+
+  <script>
+    const form = document.getElementById('virusForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const loadingSpinner = document.getElementById('loadingSpinner');
+    const clearBtn = document.getElementById('clearBtn');
+    const resultBox = document.getElementById('resultBox');
+    const virusInput = document.getElementById('virus_name');
+
+    form.addEventListener('submit', () => {
+      submitBtn.disabled = true;
+      loadingSpinner.classList.remove('d-none');
+    });
+
+    clearBtn.addEventListener('click', () => {
+      virusInput.value = '';
+      if (resultBox) {
+        resultBox.style.display = 'none';
+      }
+      submitBtn.disabled = false;
+      loadingSpinner.classList.add('d-none');
+      virusInput.focus();
+    });
+  </script>
+</body>
+</html>
